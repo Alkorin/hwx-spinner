@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"log"
 
 	"github.com/google/gousb"
@@ -9,51 +8,6 @@ import (
 
 const VID = 0x28e9
 const PID = 0x028a
-
-func getBuffer(t1 string, t2 string, t3 string) []byte {
-	var buffer bytes.Buffer
-
-	// First Image
-	buffer.Write([]byte{58, 1, 0, 243, 243, 0, 1, 1})
-	buffer.Write(make([]byte, 240))
-	buffer.Write([]byte{14, 12, 13})
-
-	// Second Image
-	buffer.Write([]byte{58, 1, 1, 243, 243, 0, 1, 1})
-	buffer.Write(make([]byte, 240))
-	buffer.Write([]byte{14, 12, 13})
-
-	// Third Image
-	buffer.Write([]byte{58, 1, 2, 243, 243, 0, 1, 1})
-	buffer.Write(make([]byte, 240))
-	buffer.Write([]byte{14, 12, 13})
-
-	// First Text
-	buffer.Write([]byte{58, 1, 3, 0, byte(len(t1) + 3), 1, 1, 1})
-	buffer.Write([]byte(t1))
-	buffer.Write([]byte{14, 12, 13})
-
-	// Second Text
-	buffer.Write([]byte{58, 1, 4, 0, byte(len(t2) + 3), 1, 2, 1})
-	buffer.Write([]byte(t2))
-	buffer.Write([]byte{14, 12, 13})
-
-	// Third Text
-	buffer.Write([]byte{58, 1, 5, 0, byte(len(t3) + 3), 1, 3, 1})
-	buffer.Write([]byte(t3))
-	buffer.Write([]byte{14, 12, 13})
-
-	// Version..Status..
-	buffer.Write([]byte{58, 1, 6, 0, 4, 0, 1, 1})
-	buffer.Write([]byte{0})
-	buffer.Write([]byte{14, 12, 13})
-
-	// Font
-	buffer.Write([]byte{58, 1, 9, 0, 0})
-	buffer.Write([]byte{14, 12, 13})
-
-	return buffer.Bytes()
-}
 
 func main() {
 	// List devices
@@ -105,7 +59,17 @@ func main() {
 	log.Printf("Writer acquired: %+v", writer)
 
 	// Construct Buffer
-	buf := getBuffer("Hello", "World", "Toms")
+	var c Configuration
+
+	c.Text1.Enabled = true
+	c.Text1.Value = "HelloWorld"
+	c.Text1.Color = BLUE
+	c.Text1.Mode = FIX
+
+	c.Message.Enabled = true
+	c.Message.Type = SPEED
+
+	buf := c.Bytes()
 
 	// Write Data
 	log.Printf("Writing data...")
