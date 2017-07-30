@@ -1,0 +1,5 @@
+image1:
+  enabled: true
+  file: zigzag.png
+  color: RED
+  mode: FIX
