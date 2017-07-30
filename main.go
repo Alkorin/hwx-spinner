@@ -36,6 +36,9 @@ func main() {
 
 	log.Printf("Loaded configuration: %s", c.String())
 
+	// Generate payload
+	buf := c.Bytes()
+
 	// Find Handspinner
 	log.Printf("Connecting to Handspinner...")
 
@@ -89,7 +92,6 @@ func main() {
 
 	// Write Data
 	log.Printf("Writing data...")
-	buf := c.Bytes()
 	for i := 0; i < len(buf); i += 32 {
 		toSend := buf[i:]
 		if len(toSend) > 32 {
