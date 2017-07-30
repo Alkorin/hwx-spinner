@@ -3,6 +3,7 @@ package Spinner
 import (
 	"bytes"
 	"io/ioutil"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -72,4 +73,21 @@ func (c Configuration) Bytes() []byte {
 	buffer.Write([]byte{14, 12, 13})
 
 	return buffer.Bytes()
+}
+
+func (c Configuration) String() string {
+	s := make([]string, 0)
+	if c.Text1.Enabled {
+		s = append(s, "Text1: "+c.Text1.String())
+	}
+	if c.Text2.Enabled {
+		s = append(s, "Text2: "+c.Text2.String())
+	}
+	if c.Text3.Enabled {
+		s = append(s, "Text3: "+c.Text3.String())
+	}
+	if c.Message.Enabled {
+		s = append(s, "Message: "+c.Message.String())
+	}
+	return strings.Join(s, "\n")
 }

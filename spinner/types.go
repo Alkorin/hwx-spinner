@@ -2,6 +2,7 @@ package Spinner
 
 import (
 	"bytes"
+	"fmt"
 )
 
 //go:generate enumer -type=Color -yaml
@@ -42,6 +43,10 @@ func (t Text) Bytes() []byte {
 	}
 }
 
+func (t Text) String() string {
+	return fmt.Sprintf("{Value: %s, Color: %s, Mode: %s}", t.Value, t.Color, t.Mode)
+}
+
 type Type byte
 
 const (
@@ -64,4 +69,8 @@ func (m Message) Bytes() []byte {
 	} else {
 		return []byte{0, 4, 0, 1, 1, 0}
 	}
+}
+
+func (m Message) String() string {
+	return fmt.Sprintf("{Type: %s, Color: %s, Mode: %s}", m.Type, m.Color, m.Mode)
 }

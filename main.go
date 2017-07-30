@@ -34,6 +34,8 @@ func main() {
 		return
 	}
 
+	log.Printf("Loaded configuration: %s", c.String())
+
 	// Find Handspinner
 	log.Printf("Connecting to Handspinner...")
 
