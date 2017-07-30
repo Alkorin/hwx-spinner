@@ -1,0 +1,6 @@
+image1:
+  enabled: true
+  file: heart.png
+  color: RED
+  mode: FIX
+  coordinates: CARTESIAN

@@ -7,12 +7,14 @@ import (
 	"image/color"
 	_ "image/png"
 	"log"
+	"math"
 	"os"
 )
 
 //go:generate enumer -type=Color -yaml
 //go:generate enumer -type=Mode -yaml
 //go:generate enumer -type=Type -yaml
+//go:generate enumer -type=Coordinates -yaml
 
 type Color byte
 
@@ -52,11 +54,19 @@ func (t Text) String() string {
 	return fmt.Sprintf("{Value: %s, Color: %s, Mode: %s}", t.Value, t.Color, t.Mode)
 }
 
+type Coordinates int
+
+const (
+	POLAR Coordinates = iota
+	CARTESIAN
+)
+
 type Image struct {
-	Enabled bool
-	File    string
-	Color   Color
-	Mode    Mode
+	Enabled     bool
+	File        string
+	Coordinates Coordinates
+	Color       Color
+	Mode        Mode
 }
 
 func (i Image) Bytes() []byte {
@@ -71,10 +81,32 @@ func (i Image) Bytes() []byte {
 		if err != nil {
 			log.Panicf("Failed to decode file %s: %s", i.File, err.Error())
 		}
-		if img.Bounds().Max.X-img.Bounds().Min.X != 120 {
+
+		if i.Coordinates == CARTESIAN {
+			// Resample img
+			imgDx := float64(img.Bounds().Dx())
+			imgDy := float64(img.Bounds().Dy())
+			imgBiggestSide := math.Max(imgDx, imgDy)
+
+			imgNew := image.NewRGBA(image.Rect(0, 0, 120, 16))
+			for x := 0; x < 120; x++ {
+				for y := 0; y < 16; y++ {
+					theta := 2 * math.Pi * float64(x) / 120
+					r := float64(26-y) / float64(26)
+
+					imgX := int(r*math.Cos(theta)*imgBiggestSide/2 + imgDx/2)
+					imgY := int(r*math.Sin(theta)*imgBiggestSide/2 + imgDy/2)
+					imgNew.Set(x, y, img.At(imgX, imgY))
+				}
+			}
+
+			img = imgNew
+		}
+
+		if img.Bounds().Dx() != 120 {
 			log.Panicf("Image should be 120px wide")
 		}
-		if img.Bounds().Max.Y-img.Bounds().Min.Y != 16 {
+		if img.Bounds().Dy() != 16 {
 			log.Panicf("Image should be 16px tall")
 		}
 		data := make([]byte, 0, 240)
@@ -102,7 +134,7 @@ func (i Image) Bytes() []byte {
 }
 
 func (i Image) String() string {
-	return fmt.Sprintf("{File: %s, Color: %s, Mode: %s}", i.File, i.Color, i.Mode)
+	return fmt.Sprintf("{File: %s, Color: %s, Mode: %s, Coordinates: %s}", i.File, i.Color, i.Mode, i.Coordinates)
 }
 
 type Type byte
