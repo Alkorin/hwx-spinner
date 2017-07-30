@@ -1,0 +1,4 @@
+message:
+  enabled: true
+  type: SPEED
+  mode: FIX
