@@ -1,0 +1,21 @@
+text1:
+  enabled: false
+  value: ""
+  color: RED
+  mode: LEFT_TO_RIGHT
+text2:
+  enabled: false
+  value: ""
+  color: RED
+  mode: LEFT_TO_RIGHT
+text3:
+  enabled: false
+  value: ""
+  color: RED
+  mode: LEFT_TO_RIGHT
+message:
+  enabled: false
+  type: SPEED
+  color: RED
+  mode: LEFT_TO_RIGHT
+
